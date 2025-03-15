@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GTIN-14 Creator</title>
+    <style> 
+	body {
+            display: grid;
+            place-items: center; /* Centra orizzontalmente e verticalmente */
+            height: 50vh;
+            margin: 0;
+            background-color: lightblue; 
+        }
+	  label {
+            color: brown; /* Cambia il colore del testo */
+	}
+	 h1 {
+            color: red; /* Cambia il colore del testo */
+	}
+    </style>
+    <script>
+        function calculateGTIN() {
+            let indicator = parseInt(document.getElementById("indicator").value);
+            if (indicator < 1 || indicator > 8) {
+                alert("Invalid indicator");
+                return;
+            }
+
+            let code = document.getElementById("code").value;
+            if (code.length !== 13 || isNaN(code)) {
+                alert("Insert a valid EAN code with 13 digits.");
+                return;
+            }
+
+            let GS1 = new Array(14);
+            GS1[0] = indicator;
+
+            for (let i = 1; i < 13; i++) {
+                GS1[i] = parseInt(code.charAt(i - 1));
+            }
+
+            let sum = 0;
+            for (let i = 1; i < 13; i++) {
+                if (i % 2 !== 0) {
+                    sum += GS1[i];
+                } else {
+                    sum += GS1[i] * 3;
+                }
+            }
+
+            let cifraDiControllo = 0;
+            let i = 0;
+            while (sum > i) {
+                cifraDiControllo = i + 10 - sum;
+                i += 10;
+                if (sum === i) {
+                    cifraDiControllo = 0;
+                }
+            }
+
+            GS1[13] = cifraDiControllo;
+
+            document.getElementById("result").innerText = "GTIN-14: " + GS1.join('');
+            document.getElementById("checkDigit").innerText = "Cifra Di Controllo: " + cifraDiControllo;
+        }
+    </script>
+</head>
+<body>
+    <h1>GTIN-14 Creator</h1>
+    <label for="indicator">Insert Indicator (1 to 8):</label>
+    <input type="number" id="indicator" min="1" max="8" required>
+    <br>
+    <label for="code">Insert Code EAN (13 digits):</label>
+    <input type="text" id="code" maxlength="13" required>
+    <br>
+    <button onclick="calculateGTIN()">Calculate GTIN-14</button>
+    <h2 id="checkDigit"></h2>
+    <h2 id="result"></h2>
+</body>
+</html>
