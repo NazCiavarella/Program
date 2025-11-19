@@ -1,7 +1,7 @@
 import java.util.Scanner;
 
 public class BruteForce {
-//try 1
+
     String code;
 
     public BruteForce(String cyphertext){
